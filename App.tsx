@@ -53,20 +53,29 @@ const INITIAL_PRODUCTS: Product[] = [
   }
 ];
 
+// Helper for safe parsing
+const safeJSONParse = <T,>(key: string, fallback: T): T => {
+  try {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : fallback;
+  } catch (error) {
+    console.error(`Error parsing ${key} from localStorage:`, error);
+    return fallback;
+  }
+};
+
 const App: React.FC = () => {
   // Simple Router State (Hash based routing logic for SPA without server)
   const [currentPath, setCurrentPath] = useState(window.location.hash.slice(1) || '/');
   
-  // App Data State
-  const [products, setProducts] = useState<Product[]>(() => {
-    const saved = localStorage.getItem('products');
-    return saved ? JSON.parse(saved) : INITIAL_PRODUCTS;
-  });
+  // App Data State with Safe Parsing
+  const [products, setProducts] = useState<Product[]>(() => 
+    safeJSONParse('products', INITIAL_PRODUCTS)
+  );
   
-  const [orders, setOrders] = useState<Order[]>(() => {
-    const saved = localStorage.getItem('orders');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [orders, setOrders] = useState<Order[]>(() => 
+    safeJSONParse('orders', [])
+  );
 
   // Sync with LocalStorage
   useEffect(() => {
