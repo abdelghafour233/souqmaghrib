@@ -1,11 +1,12 @@
 import { GoogleGenAI } from "@google/genai";
 
 const getAiClient = () => {
-  // Safety check: process might not be defined in browser environments if not bundled
-  const apiKey = typeof process !== 'undefined' ? process.env.API_KEY : undefined;
+  // In Vite (via define in config), process.env.API_KEY is replaced with the string value.
+  // We check if it exists.
+  const apiKey = process.env.API_KEY;
   
   if (!apiKey) {
-    console.warn("API Key not found in environment variables.");
+    console.warn("API Key not found. Please set API_KEY in your .env file.");
     return null;
   }
   return new GoogleGenAI({ apiKey });
