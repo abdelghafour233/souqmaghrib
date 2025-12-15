@@ -31,10 +31,14 @@
       }
       #error-display {
         display: none;
-        color: red;
+        color: #7f1d1d;
+        background-color: #fef2f2;
+        border: 1px solid #f87171;
         padding: 20px;
+        margin: 20px;
+        border-radius: 8px;
         text-align: center;
-        background: #fff;
+        direction: ltr; /* Error messages are usually English */
       }
     </style>
   <script type="importmap">
@@ -61,21 +65,21 @@
       </div>
     </div>
     
-    <!-- Error Handler Script -->
+    <!-- Error Handler Script to show startup errors on screen -->
     <div id="error-display"></div>
     <script>
       window.onerror = function(message, source, lineno, colno, error) {
         const root = document.getElementById('root');
         const errDisplay = document.getElementById('error-display');
+        console.error("Global Error:", message, error);
         if(root) root.style.display = 'none';
         if(errDisplay) {
           errDisplay.style.display = 'block';
-          errDisplay.innerHTML = '<h3>حدث خطأ أثناء التشغيل:</h3><p>' + message + '</p>';
+          errDisplay.innerHTML = '<h3>Application Error</h3><p>' + message + '</p>';
         }
       };
     </script>
 
-    <!-- Corrected Script Source: Relative path and removed importmap collision -->
     <script type="module" src="./index.tsx"></script>
   </body>
 </html>

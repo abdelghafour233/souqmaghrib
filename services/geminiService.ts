@@ -1,15 +1,20 @@
 import { GoogleGenAI } from "@google/genai";
 
 const getAiClient = () => {
-  // In Vite (via define in config), process.env.API_KEY is replaced with the string value.
-  // We check if it exists.
-  const apiKey = process.env.API_KEY;
-  
-  if (!apiKey) {
-    console.warn("API Key not found. Please set API_KEY in your .env file.");
+  try {
+    // In Vite, this string is replaced at build time.
+    // If undefined, we return null gracefully.
+    const apiKey = process.env.API_KEY;
+    
+    if (!apiKey) {
+      console.warn("API Key is missing. AI features will be disabled.");
+      return null;
+    }
+    return new GoogleGenAI({ apiKey });
+  } catch (e) {
+    console.error("Failed to initialize AI client:", e);
     return null;
   }
-  return new GoogleGenAI({ apiKey });
 };
 
 export const generateProductDescription = async (productName: string, category: string): Promise<string> => {
@@ -37,7 +42,7 @@ export const generateProductDescription = async (productName: string, category: 
 
 export const askAiAssistant = async (query: string, context: string): Promise<string> => {
    const ai = getAiClient();
-   if (!ai) return "خدمة المساعد الذكي غير متوفرة.";
+   if (!ai) return "خدمة المساعد الذكي غير متوفرة حالياً.";
 
    try {
      const prompt = `أنت مساعد ذكي في متجر إلكتروني مغربي.
@@ -51,6 +56,7 @@ export const askAiAssistant = async (query: string, context: string): Promise<st
      });
      return response.text || "عذراً، لم أفهم السؤال.";
    } catch (error) {
+     console.error("AI Assistant Error:", error);
      return "حدث خطأ في الاتصال بالمساعد الذكي.";
    }
 }
